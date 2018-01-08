@@ -113,7 +113,7 @@ public class BuySellRecordsWindow {
 		frame.getContentPane().add(coinNumTF, "cell 1 2 2 1,growx");
 		coinNumTF.setColumns(10);
 
-		totalCostLA = new JLabel("总花费：");
+		totalCostLA = new JLabel("交易金额：");
 		frame.getContentPane().add(totalCostLA, "cell 0 3,alignx trailing");
 
 		totalCostTF = new JTextField();

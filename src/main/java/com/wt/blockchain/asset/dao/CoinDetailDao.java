@@ -9,7 +9,6 @@ import java.util.List;
 import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
-import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
@@ -106,14 +105,16 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			CoinSummary cs = en.toBeanIgnoreCase(CoinSummary.class);
 			if (ConstatnsUtil.OpType.buy.equals(cs.getOp_type())) {
 				// 买入
-				csSummary.setCoin_num(csSummary.getCoin_num() + cs.getCoin_num());
+				csSummary.setCoin_num(csSummary.getCoin_num() + cs.getCoin_num()
+						- ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
 				csSummary.setTotal_cost(
 						csSummary.getTotal_cost() + ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
 				csSummary.setService_charge(csSummary.getService_charge()
 						+ ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
 			} else {
 				// 卖出
-				csSummary.setCoin_num(csSummary.getCoin_num() - cs.getCoin_num());
+				csSummary.setCoin_num(csSummary.getCoin_num() - cs.getCoin_num()
+						- ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
 				csSummary.setTotal_cost(
 						csSummary.getTotal_cost() - ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
 				csSummary.setService_charge(csSummary.getService_charge()
