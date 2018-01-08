@@ -10,6 +10,7 @@ import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
+import static com.wt.blockchain.asset.util.ConstatnsUtil.getCost;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
 
@@ -106,19 +107,17 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			if (ConstatnsUtil.OpType.buy.equals(cs.getOp_type())) {
 				// 买入
 				csSummary.setCoin_num(csSummary.getCoin_num() + cs.getCoin_num()
-						- ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
-				csSummary.setTotal_cost(
-						csSummary.getTotal_cost() + ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
-				csSummary.setService_charge(csSummary.getService_charge()
-						+ ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
+						- getCost(cs.getMonetary_unit(), cs.getService_charge()));
+				csSummary.setTotal_cost(csSummary.getTotal_cost() + getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
+				csSummary.setService_charge(
+						csSummary.getService_charge() + getCost(cs.getMonetary_unit(), cs.getService_charge()));
 			} else {
 				// 卖出
 				csSummary.setCoin_num(csSummary.getCoin_num() - cs.getCoin_num()
-						- ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
-				csSummary.setTotal_cost(
-						csSummary.getTotal_cost() - ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
-				csSummary.setService_charge(csSummary.getService_charge()
-						- ConstatnsUtil.getCost(cs.getMonetary_unit(), cs.getService_charge()));
+						- getCost(cs.getMonetary_unit(), cs.getService_charge()));
+				csSummary.setTotal_cost(csSummary.getTotal_cost() - getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
+				csSummary.setService_charge(
+						csSummary.getService_charge() - getCost(cs.getMonetary_unit(), cs.getService_charge()));
 			}
 		}
 

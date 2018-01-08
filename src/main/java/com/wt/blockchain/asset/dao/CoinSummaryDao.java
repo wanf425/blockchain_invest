@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mysql.jdbc.StringUtils;
-import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
