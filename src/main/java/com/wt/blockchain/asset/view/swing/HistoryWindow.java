@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import com.mysql.jdbc.StringUtils;
 import com.wt.blockchain.asset.dao.CoinDetailDao;
 import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.util.CommonUtil;
@@ -29,6 +30,7 @@ public class HistoryWindow {
 	private JLabel coinNameLA = new JLabel("代币：");
 	private JLabel coinNameLA2 = new JLabel("coinName");
 	private JButton settelmentBtn = new JButton("结算");
+	private JButton cancelBtn = new JButton("撤销");
 	private JTextPane historyTF = new JTextPane();
 	private JScrollPane jsp = new JScrollPane(historyTF);
 	private String coinName;
@@ -77,23 +79,39 @@ public class HistoryWindow {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		historyTF.setEditable(false);
+		
+		
 
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup().addGap(16)
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 765, GroupLayout.PREFERRED_SIZE)
-								.addGroup(groupLayout.createSequentialGroup().addComponent(coinNameLA)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(coinNameLA2)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(settelmentBtn)))
-						.addContainerGap(19, Short.MAX_VALUE)));
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup().addGap(14)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(settelmentBtn)
-								.addComponent(coinNameLA).addComponent(coinNameLA2))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(20, Short.MAX_VALUE)));
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(16)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 765, GroupLayout.PREFERRED_SIZE)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(coinNameLA)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(coinNameLA2)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(settelmentBtn)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(cancelBtn)))
+					.addContainerGap(19, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(14)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(settelmentBtn)
+						.addComponent(coinNameLA)
+						.addComponent(coinNameLA2)
+						.addComponent(cancelBtn))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(109, Short.MAX_VALUE))
+		);
 		frame.getContentPane().setLayout(groupLayout);
 
 		initDate(coinName);
@@ -128,11 +146,6 @@ public class HistoryWindow {
 			
 			// 是结算生成的明细数据
 			if (isSettlement(detail.getIs_settlement())) {
-//				sb.append(line);
-//				setString(sb, "结算状态:已结算", true);
-//				sb.append(space);
-				
-
 				getSettlementLog(buyNum, sellNum, buyMoney, sellMoney, sb, detail.getSettlement_price());
 
 				buyNum = 0.0;
@@ -141,8 +154,6 @@ public class HistoryWindow {
 				sellMoney = 0.0;
 			} else {
 				// 不是结算生成的明细数据
-//				sb.append(space);
-//				sb.append("[" + CommonUtil.formateDate(detail.getOp_time()) + "]  ");
 				if (ConstatnsUtil.OpType.buy.equals(detail.getOp_type())) {
 					setString(sb, "买入，数量：" + formateNum(detail.getCoin_num(), "#.####"));
 					buyNum += detail.getCoin_num();
@@ -212,10 +223,26 @@ public class HistoryWindow {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					coinDetailDao.doSettlement(coinName);
+					JOptionPane.showMessageDialog(null, "结算成功！");
+					showHistory();
 				} catch (Exception exc) {
 					JOptionPane.showMessageDialog(null, exc.getMessage());
 				}
-
+			}
+		});
+		
+		cancelBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String result = coinDetailDao.doCancel(coinName);
+					JOptionPane.showMessageDialog(null, StringUtils.isNullOrEmpty(result) ? "撤销成功！" : "撤销失败," + result);
+					showHistory();
+				} catch (Exception exc) {
+					JOptionPane.showMessageDialog(null, "撤销失败！" + exc.getMessage());
+				}
+				
 			}
 		});
 	}

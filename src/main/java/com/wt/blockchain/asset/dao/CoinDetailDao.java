@@ -1,21 +1,57 @@
 package com.wt.blockchain.asset.dao;
 
+import static com.wt.blockchain.asset.util.ConstatnsUtil.getCost;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.mysql.jdbc.StringUtils;
 import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
-import static com.wt.blockchain.asset.util.ConstatnsUtil.getCost;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
 
 public class CoinDetailDao extends BaseDao<CoinDetail> {
 	CoinInfoDao coinInfoDao = new CoinInfoDao();
+
+	public String doCancel(String coinName) {
+		String result = "";
+		try {
+			session.beginTransaction();
+			String sql = "select * from tb_coin_detail where COIN_NAME = ? ORDER BY ID desc limit 1 ";
+			List<Entity> list = session.query(sql, new Object[] { coinName });
+
+			if (list.isEmpty()) {
+				throw new Exception("明细信息不存在");
+			}
+
+			CoinDetail detail = list.get(0).toBeanIgnoreCase(CoinDetail.class);
+
+			if (!StringUtils.isNullOrEmpty(detail.getSettlement_version())) {
+				throw new Exception("已结算数据不能撤销");
+			}
+
+			// 删除代币和法币的明细记录
+			sql = "delete from tb_coin_detail where OP_TIME = ? and TOTAL_COST = ? and CREATE_DATE =? ";
+			session.execute(sql, new Object[] { detail.getOp_time(), detail.getTotal_cost(), detail.getCreate_Date() });
+
+			updateSummary(coinName);
+			updateSummary(detail.getMonetary_unit());
+			
+			session.commit();
+		} catch (Exception e) {
+			session.quietRollback();
+			LogUtil.print("doCancel err", e);
+			result = e.getMessage();
+		}
+
+		return result;
+	}
 
 	/**
 	 * 查询明细数据

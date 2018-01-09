@@ -23,6 +23,11 @@ public class ConstatnsUtil {
 		public static String sell = "2";
 	}
 
+	public interface Market {
+		public static String OKOEX = "OKex";
+		public static String HUOBI = "HUOBI";
+	}
+	
 	public interface Currency {
 		public static String USDT = "USDT";
 		public static String RMB = "RMB";

@@ -26,6 +26,8 @@ import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.Constants;
 import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil.ConstatnsKey;
+import com.wt.blockchain.asset.util.ConstatnsUtil.Currency;
+import com.wt.blockchain.asset.util.ConstatnsUtil.Market;
 import com.wt.blockchain.asset.util.LogUtil;
 
 import net.miginfocom.swing.MigLayout;
@@ -318,12 +320,25 @@ public class BuySellRecordsWindow {
 		// 币种 下拉框
 		List<Constants> coinNames = constantsDao.queryByType(ConstatnsKey.COIN_NAME);
 		CommonUtil.initialComboBox(coinNames, coinNameCB, c -> c.getValue());
+		
 		// 货币类型 下拉框
 		List<Constants> currencyType = constantsDao.queryByType(ConstatnsKey.CURRENCY_TYPE);
 		CommonUtil.initialComboBox(currencyType, totalCostCB, c -> c.getValue());
+		currencyType.forEach( t -> {
+			if(Currency.USDT.equals(t.getKey())) {
+				totalCostCB.setSelectedItem(t);
+			}
+		});
+		
 		// 交易平台 下拉框
 		List<Constants> market = constantsDao.queryByType(ConstatnsKey.MARKET);
 		CommonUtil.initialComboBox(market, opMarketCB, c -> c.getValue());
+		market.forEach( t -> {
+			if(Market.OKOEX.equals(t.getKey())) {
+				opMarketCB.setSelectedItem(t);
+			}
+		});
+		
 		// 手续费
 		serviceChargePercentTF.setText("1");
 		// 操作时间

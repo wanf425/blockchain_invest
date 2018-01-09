@@ -322,10 +322,6 @@ public class BuySellStreamWindow extends JFrame {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {// 单击鼠标左键
 
 					String coinName = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
-					int colummCount = table.getModel().getColumnCount();// 列数
-					for (int i = 0; i < colummCount; i++)
-						System.out.print(table.getModel().getValueAt(table.getSelectedRow(), i).toString() + "   ");
-					System.out.println("2");
 
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
