@@ -7,11 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.mysql.jdbc.StringUtils;
 import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
+import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
@@ -42,7 +44,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 
 			updateSummary(coinName);
 			updateSummary(detail.getMonetary_unit());
-			
+
 			session.commit();
 		} catch (Exception e) {
 			session.quietRollback();
@@ -129,35 +131,42 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 	}
 
 	private void updateSummary(String coinName) throws SQLException {
-		String sql = " SELECT " + " d.OP_TYPE, " + " sum(d.COIN_NUM) as COIN_NUM, "
-				+ " sum(case d.MONETARY_UNIT when 'RMB' then d.TOTAL_COST / 6.64 else d.TOTAL_COST end) as TOTAL_COST, "
-				+ " sum(case d.MONETARY_UNIT when 'RMB' then d.SERVICE_CHARGE / 6.64 else d.SERVICE_CHARGE end) as SERVICE_CHARGE "
-				+ " FROM tb_coin_detail d " + " WHERE d.SETTLEMENT_VERSION is null and d.COIN_NAME = ? "
-				+ " GROUP BY d.OP_TYPE ORDER BY d.OP_TYPE ";
+		String sql = "SELECT OP_TYPE,COIN_NUM,TOTAL_COST,SERVICE_CHARGE,MONETARY_UNIT "
+				+ " FROM tb_coin_detail WHERE SETTLEMENT_VERSION is null and COIN_NAME = ? ";
+		
+		
+//		String sql = " SELECT " + " d.OP_TYPE, " + " sum(d.COIN_NUM) as COIN_NUM, "
+//				+ " sum(case d.MONETARY_UNIT when 'RMB' then d.TOTAL_COST / 6.64 else d.TOTAL_COST end) as TOTAL_COST, "
+//				+ " sum(case d.MONETARY_UNIT when 'RMB' then d.SERVICE_CHARGE / 6.64 else d.SERVICE_CHARGE end) as SERVICE_CHARGE "
+//				+ " FROM tb_coin_detail d " + " WHERE d.SETTLEMENT_VERSION is null and d.COIN_NAME = ? "
+//				+ " GROUP BY d.OP_TYPE ORDER BY d.OP_TYPE ";
 		List<Entity> list = session.query(sql, new Object[] { coinName });
 
 		CoinSummary csSummary = new CoinSummary();
 		csSummary.setCoin_name(coinName);
+		Map<String, CoinInfo> coinInfos = coinInfoDao.queryAllMap();
+
 		for (Entity en : list) {
 			CoinSummary cs = en.toBeanIgnoreCase(CoinSummary.class);
+
+			Double totalCost = getCost(cs.getMonetary_unit(), cs.getTotal_cost(), coinInfos.get(cs.getMonetary_unit()));
+			Double serviceCharge = getCost(cs.getMonetary_unit(), cs.getService_charge(),
+					coinInfos.get(cs.getMonetary_unit()));
+
 			if (ConstatnsUtil.OpType.buy.equals(cs.getOp_type())) {
 				// 买入
-				csSummary.setCoin_num(csSummary.getCoin_num() + cs.getCoin_num()
-						- getCost(cs.getMonetary_unit(), cs.getService_charge()));
-				csSummary.setTotal_cost(csSummary.getTotal_cost() + getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
-				csSummary.setService_charge(
-						csSummary.getService_charge() + getCost(cs.getMonetary_unit(), cs.getService_charge()));
+				csSummary.setCoin_num(csSummary.getCoin_num() + cs.getCoin_num());
+				csSummary.setTotal_cost(csSummary.getTotal_cost() + totalCost);
+				csSummary.setService_charge(csSummary.getService_charge() + serviceCharge);
 			} else {
 				// 卖出
-				csSummary.setCoin_num(csSummary.getCoin_num() - cs.getCoin_num()
-						- getCost(cs.getMonetary_unit(), cs.getService_charge()));
-				csSummary.setTotal_cost(csSummary.getTotal_cost() - getCost(cs.getMonetary_unit(), cs.getTotal_cost()));
-				csSummary.setService_charge(
-						csSummary.getService_charge() - getCost(cs.getMonetary_unit(), cs.getService_charge()));
+				csSummary.setCoin_num(csSummary.getCoin_num() - cs.getCoin_num());
+				csSummary.setTotal_cost(csSummary.getTotal_cost() - totalCost);
+				csSummary.setService_charge(csSummary.getService_charge() + serviceCharge);
 			}
 		}
 
-		csSummary.setAvarange_price(csSummary.getTotal_cost() / csSummary.getCoin_num());
+		csSummary.setAvarange_price(CommonUtil.divide(csSummary.getTotal_cost(), csSummary.getCoin_num()));
 		csSummary.setMonetary_unit(ConstatnsUtil.Currency.USDT);
 
 		// 查询汇总记录是否存在
@@ -196,12 +205,13 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			Date updateDate = new Date();
 
 			// 修改明细数据为已结算
-			String sql = "update tb_coin_detail set UPDATE_DATE = ? where SETTLEMENT_VERSION is null and COIN_NAME = ? ";
-			session.execute(sql, new Object[] { updateDate, coinName });
-
-			// 新增明细数据
 			CoinInfo coinInfo = coinInfoDao.queryCoinInfo(coinName).get(0);
 
+			String sql = "update tb_coin_detail set UPDATE_DATE = ?, SETTLEMENT_DATE = ? , SETTLEMENT_VERSION = ?,  SETTLEMENT_PRICE = ? where SETTLEMENT_VERSION is null and COIN_NAME = ? ";
+			session.execute(sql,
+					new Object[] { updateDate, updateDate, settlementVersion, coinInfo.getMarket_price(), coinName });
+
+			// 新增明细数据
 			sql = "select * from tb_coin_summary where COIN_NAME = ? ";
 			List<Entity> list = session.query(sql, new Object[] { coinName });
 			CoinSummary summary = list.get(0).toBeanIgnoreCase(CoinSummary.class);
@@ -211,10 +221,11 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 					.set("OP_TYPE", ConstatnsUtil.OpType.buy).set("OP_TIME", new Date())
 					.set("OP_MARKET", ConstatnsUtil.MARKET.SYSTEM).set("REMARK", "结算生成")
 					.set("IS_SETTLEMENT", ConstatnsUtil.SETTLEMENT_STATE.IS_SETTLEMENT)
-					.set("SETTLEMENT_PRICE", coinInfo.getMarket_price()).set("SETTLEMENT_VERSION", settlementVersion)
-					.set("SETTLEMENT_DATE", updateDate);
+					.set("SETTLEMENT_PRICE", coinInfo.getMarket_price());
 			session.insert(entity);
 
+			// 修改汇总数据
+			updateSummary(coinName);
 			session.commit();
 		} catch (SQLException e) {
 			session.quietRollback();

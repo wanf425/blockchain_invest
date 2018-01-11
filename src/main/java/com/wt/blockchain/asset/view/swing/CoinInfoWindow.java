@@ -132,7 +132,7 @@ public class CoinInfoWindow {
 
 	private void initDate() {
 		// 货币信息
-		List<CoinInfo> list = coinInfoDao.queryAll();
+		List<CoinInfo> list = coinInfoDao.queryAllList();
 		Gson gson = new Gson();
 		String coinInfo = gson.toJson(list);
 		cionInfoEP.setText(CommonUtil.formatJson(coinInfo));

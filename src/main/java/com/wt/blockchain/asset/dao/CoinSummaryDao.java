@@ -20,6 +20,29 @@ public class CoinSummaryDao extends BaseDao<CoinSummary> {
 	 * @return
 	 * @throws SQLException
 	 */
+	public List<CoinSummary> queryAll() {
+		List<CoinSummary> result = new ArrayList<>();
+
+		try {
+			String sql = "select * from tb_coin_summary ORDER BY ID desc";
+			List<Entity> list = runner.query(sql, new Object[] { });
+
+			list.forEach(en -> result.add(en.toBeanIgnoreCase(CoinSummary.class)));
+
+		} catch (Exception e) {
+			LogUtil.print("query err", e);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * 查询汇总数据
+	 * 
+	 * @param coinName
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<CoinSummary> query(String coinName) {
 		List<CoinSummary> result = new ArrayList<>();
 

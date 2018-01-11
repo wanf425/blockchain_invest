@@ -1,16 +1,18 @@
 package com.wt.blockchain.asset.util;
 
+import com.wt.blockchain.asset.dto.CoinInfo;
+
 public class ConstatnsUtil {
 
 	public interface MARKET {
 		public static String SYSTEM = "system"; // 系统默认
 	}
-	
+
 	public interface SETTLEMENT_STATE {
 		public static int IS_SETTLEMENT = 1; // 是
 		public static int NOT_SETTLEMENT = 1; // 不是
 	}
-	
+
 	public interface ConstatnsKey {
 		public static String OP_TYPE = "opType"; // 操作类型
 		public static String COIN_NAME = "coinName"; // 币种
@@ -27,10 +29,12 @@ public class ConstatnsUtil {
 		public static String OKOEX = "OKex";
 		public static String HUOBI = "HUOBI";
 	}
-	
+
 	public interface Currency {
 		public static String USDT = "USDT";
 		public static String RMB = "RMB";
+		public static String BTC = "BTC";
+		public static String ETH = "ETH";
 		public static double rate = 6.64;
 	}
 
@@ -44,11 +48,13 @@ public class ConstatnsUtil {
 		}
 	}
 
-	public static Double getCost(String currency, double num) {
-		if (Currency.RMB.equals(currency)) {
-			return num / Currency.rate;
-		} else {
-			return num;
+	public static Double getCost(String currency, double num, CoinInfo currencyCoinInfo) {
+		Double result = 0.0;
+
+		if (currencyCoinInfo != null) {
+			result = num * currencyCoinInfo.getMarket_price();
 		}
+
+		return result;
 	}
 }

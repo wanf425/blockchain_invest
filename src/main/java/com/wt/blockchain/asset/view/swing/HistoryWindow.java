@@ -189,7 +189,6 @@ public class HistoryWindow {
 		setString(sb, "卖:" + formateNum(sellNum, "#.####"));
 		setString(sb, "投入:" + formateNum(buyMoney, "#.##"));
 		setString(sb, "收入:" + formateNum(sellMoney, "#.##"));
-		setString(sb, "市价:" + formateNum(price, "#.##"));
 		setString(sb, "总价值:" + formateNum(totalMoney, "#.##"));
 		setString(sb, "收益率:" + formateNum(rate, "#.##") + "%", true);
 

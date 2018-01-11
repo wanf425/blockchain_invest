@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -88,9 +89,21 @@ public class BuySellStreamWindow extends JFrame {
 		// 表格
 		TableModel dataModel = getTableModel();
 		table = new JTable(dataModel);
-		table.setRowSorter(new TableRowSorter<TableModel>(dataModel)); // 添加排序
+		// 添加排序
+		table.setRowSorter(new TableRowSorter<TableModel>(dataModel)); 
 		JScrollPane jsp = new JScrollPane(table);
-
+		// 右对齐
+		DefaultTableCellRenderer r = new DefaultTableCellRenderer();
+		r.setHorizontalAlignment(JLabel.RIGHT);
+		// 左对齐
+		DefaultTableCellRenderer l = new DefaultTableCellRenderer();
+		l.setHorizontalAlignment(JLabel.LEFT);
+		table.setDefaultRenderer(Object.class, r);
+		table.getColumnModel().getColumn(0).setCellRenderer(l);
+		// 列宽
+		table.getColumnModel().getColumn(0).setPreferredWidth(15);
+		
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING).addGroup(gl_contentPane
 				.createSequentialGroup().addContainerGap()
@@ -163,7 +176,7 @@ public class BuySellStreamWindow extends JFrame {
 					return getData().get(row).getCoin_name();
 				}
 				case (1): {
-					return getData().get(row).getCoin_num();
+					return CommonUtil.formateNum(getData().get(row).getCoin_num(), "#.########");
 				}
 				case (2): {
 					return getData().get(row).getTotal_cost();
@@ -321,7 +334,7 @@ public class BuySellStreamWindow extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {// 单击鼠标左键
 
-					String coinName = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
+					String coinName = summaryList.get(getSelectedRowIndex()).getCoin_name();
 
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
@@ -340,5 +353,9 @@ public class BuySellStreamWindow extends JFrame {
 				}
 			}
 		});
+	}
+
+	private int getSelectedRowIndex() {
+		return table.convertRowIndexToModel(table.getSelectedRow());
 	}
 }

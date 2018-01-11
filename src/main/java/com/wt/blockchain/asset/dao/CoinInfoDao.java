@@ -2,7 +2,9 @@ package com.wt.blockchain.asset.dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
@@ -27,7 +29,16 @@ public class CoinInfoDao extends BaseDao<CoinInfo> {
 		return result;
 	}
 
-	public List<CoinInfo> queryAll() {
+	public Map<String, CoinInfo> queryAllMap() {
+		List<CoinInfo> list = queryAllList();
+
+		Map<String, CoinInfo> map = new HashMap<>();
+		list.forEach(t -> map.put(t.getCoin_name(), t));
+
+		return map;
+	}
+
+	public List<CoinInfo> queryAllList() {
 		List<CoinInfo> result = new ArrayList<CoinInfo>();
 
 		try {
