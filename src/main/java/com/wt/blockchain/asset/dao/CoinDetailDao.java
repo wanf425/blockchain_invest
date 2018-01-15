@@ -15,6 +15,8 @@ import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
+import com.wt.blockchain.asset.util.ConstatnsUtil.Market;
+import com.wt.blockchain.asset.util.ConstatnsUtil.OpType;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
 
@@ -95,6 +97,35 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 		}
 	}
 
+	/**
+	 * 补差额
+	 * 
+	 * @param coinName
+	 * @param refund
+	 */
+	public void doRefund(String coinName, Double refund, String remark) throws Exception {
+		try {
+			session.beginTransaction();
+
+			String opType = refund >= 0 ? OpType.buy : OpType.sell;
+			// 插入代币明细数据
+			Entity entity = Entity.create("tb_coin_detail").set("COIN_NAME", coinName).set("COIN_NUM", Math.abs(refund))
+					.set("TOTAL_COST", 0).set("SERVICE_CHARGE", 0).set("MONETARY_UNIT", ConstatnsUtil.Currency.USDT)
+					.set("AVARANGE_PRICE", 0).set("OP_TYPE", opType).set("OP_TIME", new Date())
+					.set("OP_MARKET", Market.OKOEX).set("REMARK", remark);
+			session.insert(entity);
+
+			// 修改代币汇总数据
+			updateSummary(coinName);
+
+			session.commit();
+		} catch (SQLException e) {
+			session.quietRollback();
+			LogUtil.print("doSave err", e);
+			throw new Exception("操作失败！");
+		}
+	}
+
 	public void doSave(CoinDetail detail) throws Exception {
 
 		// 代币明细数据
@@ -109,6 +140,9 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 					.set("MONETARY_UNIT", detail.getMonetary_unit());
 			session.insert(entity);
 
+			// 修改代币汇总数据
+			updateSummary(detail.getCoin_name());
+
 			// 插入货币明细数据
 			Entity entity2 = Entity.create("tb_coin_detail").set("COIN_NAME", detail.getMonetary_unit())
 					.set("COIN_NUM", detail.getTotal_cost()).set("TOTAL_COST", detail.getTotal_cost())
@@ -118,8 +152,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 					.set("MONETARY_UNIT", detail.getMonetary_unit());
 			session.insert(entity2);
 
-			// 修改代币及法币的汇总数据
-			updateSummary(detail.getCoin_name());
+			// 修改法币汇总数据
 			updateSummary(detail.getTotal_cost_currency());
 
 			session.commit();
@@ -133,13 +166,16 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 	private void updateSummary(String coinName) throws SQLException {
 		String sql = "SELECT OP_TYPE,COIN_NUM,TOTAL_COST,SERVICE_CHARGE,MONETARY_UNIT "
 				+ " FROM tb_coin_detail WHERE SETTLEMENT_VERSION is null and COIN_NAME = ? ";
-		
-		
-//		String sql = " SELECT " + " d.OP_TYPE, " + " sum(d.COIN_NUM) as COIN_NUM, "
-//				+ " sum(case d.MONETARY_UNIT when 'RMB' then d.TOTAL_COST / 6.64 else d.TOTAL_COST end) as TOTAL_COST, "
-//				+ " sum(case d.MONETARY_UNIT when 'RMB' then d.SERVICE_CHARGE / 6.64 else d.SERVICE_CHARGE end) as SERVICE_CHARGE "
-//				+ " FROM tb_coin_detail d " + " WHERE d.SETTLEMENT_VERSION is null and d.COIN_NAME = ? "
-//				+ " GROUP BY d.OP_TYPE ORDER BY d.OP_TYPE ";
+
+		// String sql = " SELECT " + " d.OP_TYPE, " + " sum(d.COIN_NUM) as
+		// COIN_NUM, "
+		// + " sum(case d.MONETARY_UNIT when 'RMB' then d.TOTAL_COST / 6.64 else
+		// d.TOTAL_COST end) as TOTAL_COST, "
+		// + " sum(case d.MONETARY_UNIT when 'RMB' then d.SERVICE_CHARGE / 6.64
+		// else d.SERVICE_CHARGE end) as SERVICE_CHARGE "
+		// + " FROM tb_coin_detail d " + " WHERE d.SETTLEMENT_VERSION is null
+		// and d.COIN_NAME = ? "
+		// + " GROUP BY d.OP_TYPE ORDER BY d.OP_TYPE ";
 		List<Entity> list = session.query(sql, new Object[] { coinName });
 
 		CoinSummary csSummary = new CoinSummary();

@@ -57,8 +57,10 @@ public class BuySellStreamWindow extends JFrame {
 	private BuySellRecordsWindow buySellRecordsWindow = null;
 	private PutMoneyWindow putMoneyWindow = null;
 	private HistoryWindow historyWindow = null;
+	private RefundWindow refundWindow = null;
 
 	private String queryCoinName = "";
+	private final JButton refundBtn = new JButton("补差额");
 
 	/**
 	 * Launch the application.
@@ -105,36 +107,50 @@ public class BuySellStreamWindow extends JFrame {
 		
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING).addGroup(gl_contentPane
-				.createSequentialGroup().addContainerGap()
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(totalNumLA, GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)
 						.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)
-						.addGroup(gl_contentPane.createSequentialGroup().addComponent(coinNameLA)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(queryBtn, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED).addComponent(buySellBtn)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(putBtn, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED).addComponent(infoBtn)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(assetBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
-				.addContainerGap()));
-
-		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup().addGap(14)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(coinNameLA)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(queryBtn, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(buySellBtn)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(putBtn, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(infoBtn)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(refundBtn)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(assetBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(14)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(assetBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(queryBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(buySellBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(coinNameLA).addComponent(putBtn).addComponent(infoBtn))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(totalNumLA).addGap(92)));
+						.addComponent(coinNameLA)
+						.addComponent(putBtn)
+						.addComponent(infoBtn)
+						.addComponent(refundBtn))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(totalNumLA)
+					.addGap(92))
+		);
 		contentPane.setLayout(gl_contentPane);
 
 		initDate();
@@ -328,7 +344,26 @@ public class BuySellStreamWindow extends JFrame {
 				});
 			}
 		});
-
+		
+		// 补差额
+		refundBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							if (refundWindow == null) {
+								refundWindow = new RefundWindow();
+							} else {
+								refundWindow.show();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
+		
 		// 列表双击
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

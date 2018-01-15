@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class BuySellRecordsWindow {
 	private ConstantsDao constantsDao = new ConstantsDao();
 	private CoinDetailDao coinDetailDao = new CoinDetailDao();
 	private CoinSummaryDao coinSummaryDao = new CoinSummaryDao();
-	private DateFormat df = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+	private DateFormat df = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 	private Map<String, CoinSummary> summaryMap = new HashMap<>();
 
 	private JFrame frame;
@@ -72,8 +73,9 @@ public class BuySellRecordsWindow {
 
 	/**
 	 * Launch the application.
+	 * @throws ParseException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -115,7 +117,8 @@ public class BuySellRecordsWindow {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 336, 427);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setLayout(new MigLayout("", "[][grow][grow]", "[][][][][][][][][][][][][][][]"));
 
 		opTypeLA = new JLabel("操作类型：");
@@ -424,4 +427,5 @@ public class BuySellRecordsWindow {
 		// 操作时间
 		opTimeTF.setText(df.format(new Date()));
 	}
+	
 }
