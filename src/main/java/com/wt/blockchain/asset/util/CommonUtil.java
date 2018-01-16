@@ -33,7 +33,7 @@ public class CommonUtil {
 	 */
 	public static double getExchangeRate() {
 		CoinInfoDao coinInfoDao = new CoinInfoDao();
-		List<CoinInfo> list = coinInfoDao.queryCoinInfo(ConstatnsUtil.Currency.RMB);
+		List<CoinInfo> list = coinInfoDao.queryCoinInfo(Constatns.Currency.RMB);
 
 		return list.get(0).getMarket_price();
 	}
@@ -62,7 +62,7 @@ public class CommonUtil {
 
 		try {
 			if (num != null) {
-				String defalutFormate = "#.##";
+				String defalutFormate = "#.00";
 
 				if (formate != null && formate.length > 0) {
 					defalutFormate = formate[0];

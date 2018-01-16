@@ -1,6 +1,6 @@
 package com.wt.blockchain.asset.dao;
 
-import static com.wt.blockchain.asset.util.ConstatnsUtil.getCost;
+import static com.wt.blockchain.asset.util.Constatns.getCost;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -13,9 +13,9 @@ import com.mysql.jdbc.StringUtils;
 import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
-import com.wt.blockchain.asset.util.ConstatnsUtil;
-import com.wt.blockchain.asset.util.ConstatnsUtil.Market;
-import com.wt.blockchain.asset.util.ConstatnsUtil.OpType;
+import com.wt.blockchain.asset.util.Constatns;
+import com.wt.blockchain.asset.util.Constatns.Market;
+import com.wt.blockchain.asset.util.Constatns.OpType;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.wt.blockchain.asset.util.NumberUtil;
 import com.xiaoleilu.hutool.db.Entity;
@@ -82,13 +82,13 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 	public void putMonet(Double money) throws Exception {
 		try {
 			session.beginTransaction();
-			Entity entity = Entity.create("tb_coin_detail").set("COIN_NAME", ConstatnsUtil.Currency.RMB)
+			Entity entity = Entity.create("tb_coin_detail").set("COIN_NAME", Constatns.Currency.RMB)
 					.set("COIN_NUM", money).set("TOTAL_COST", money).set("SERVICE_CHARGE", 0)
-					.set("MONETARY_UNIT", ConstatnsUtil.Currency.RMB).set("AVARANGE_PRICE", 1)
-					.set("OP_TYPE", ConstatnsUtil.OpType.buy).set("OP_TIME", new Date()).set("OP_MARKET", "");
+					.set("MONETARY_UNIT", Constatns.Currency.RMB).set("AVARANGE_PRICE", 1)
+					.set("OP_TYPE", Constatns.OpType.buy).set("OP_TIME", new Date()).set("OP_MARKET", "");
 			session.insert(entity);
 
-			updateSummary(ConstatnsUtil.Currency.RMB);
+			updateSummary(Constatns.Currency.RMB);
 			session.commit();
 		} catch (SQLException e) {
 			session.quietRollback();
@@ -110,7 +110,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			String opType = refund >= 0 ? OpType.buy : OpType.sell;
 			// 插入代币明细数据
 			Entity entity = Entity.create("tb_coin_detail").set("COIN_NAME", coinName).set("COIN_NUM", Math.abs(refund))
-					.set("TOTAL_COST", 0).set("SERVICE_CHARGE", 0).set("MONETARY_UNIT", ConstatnsUtil.Currency.USDT)
+					.set("TOTAL_COST", 0).set("SERVICE_CHARGE", 0).set("MONETARY_UNIT", Constatns.Currency.USDT)
 					.set("AVARANGE_PRICE", 0).set("OP_TYPE", opType).set("OP_TIME", new Date())
 					.set("OP_MARKET", Market.OKOEX).set("REMARK", remark);
 			session.insert(entity);
@@ -148,7 +148,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 					.set("COIN_NUM", detail.getTotal_cost()).set("TOTAL_COST", detail.getTotal_cost())
 					.set("SERVICE_CHARGE", getServiceCharge(detail.getTotal_cost_currency(), detail))
 					.set("MONETARY_UNIT", detail.getMonetary_unit()).set("AVARANGE_PRICE", 0)
-					.set("OP_TYPE", ConstatnsUtil.reverseOpType(detail.getOp_type()))
+					.set("OP_TYPE", Constatns.reverseOpType(detail.getOp_type()))
 					.set("OP_TIME", detail.getOp_time()).set("OP_MARKET", detail.getOp_market())
 					.set("MONETARY_UNIT", detail.getMonetary_unit());
 			session.insert(entity2);
@@ -189,7 +189,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			Double serviceCharge = getCost(cs.getMonetary_unit(), cs.getService_charge(),
 					coinInfos.get(cs.getMonetary_unit()));
 
-			if (ConstatnsUtil.OpType.buy.equals(cs.getOp_type())) {
+			if (Constatns.OpType.buy.equals(cs.getOp_type())) {
 				// 买入
 				csSummary.setCoin_num(csSummary.getCoin_num() + cs.getCoin_num());
 				csSummary.setTotal_cost(csSummary.getTotal_cost() + totalCost);
@@ -203,7 +203,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 		}
 
 		csSummary.setAvarange_price(NumberUtil.divide(csSummary.getTotal_cost(), csSummary.getCoin_num()));
-		csSummary.setMonetary_unit(ConstatnsUtil.Currency.USDT);
+		csSummary.setMonetary_unit(Constatns.Currency.USDT);
 
 		// 查询汇总记录是否存在
 		String countSQL = "SELECT COUNT(1) as count FROM tb_coin_summary WHERE coin_name = ? ";
@@ -254,9 +254,9 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			Entity entity = Entity.create("tb_coin_detail").set("COIN_NAME", summary.getCoin_name())
 					.set("COIN_NUM", summary.getCoin_num()).set("TOTAL_COST", 0).set("SERVICE_CHARGE", 0)
 					.set("MONETARY_UNIT", summary.getMonetary_unit()).set("AVARANGE_PRICE", 0)
-					.set("OP_TYPE", ConstatnsUtil.OpType.buy).set("OP_TIME", new Date())
-					.set("OP_MARKET", ConstatnsUtil.MARKET.SYSTEM).set("REMARK", "结算生成")
-					.set("IS_SETTLEMENT", ConstatnsUtil.SETTLEMENT_STATE.IS_SETTLEMENT)
+					.set("OP_TYPE", Constatns.OpType.buy).set("OP_TIME", new Date())
+					.set("OP_MARKET", Constatns.Market.SYSTEM).set("REMARK", "结算生成")
+					.set("IS_SETTLEMENT", Constatns.SETTLEMENT_STATE.IS_SETTLEMENT)
 					.set("SETTLEMENT_PRICE", coinInfo.getMarket_price());
 			session.insert(entity);
 

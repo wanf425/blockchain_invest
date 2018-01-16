@@ -30,8 +30,8 @@ import com.wt.blockchain.asset.dao.ConstantsDao;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.dto.Constants;
 import com.wt.blockchain.asset.util.CommonUtil;
-import com.wt.blockchain.asset.util.ConstatnsUtil;
-import com.wt.blockchain.asset.util.ConstatnsUtil.ConstatnsKey;
+import com.wt.blockchain.asset.util.Constatns;
+import com.wt.blockchain.asset.util.Constatns.ConstatnsKey;
 import com.wt.blockchain.asset.util.LogUtil;
 
 public class BuySellStreamWindow extends JFrame {
@@ -248,10 +248,10 @@ public class BuySellStreamWindow extends JFrame {
 		Double usdtNum = 0.0;
 
 		for (CoinSummary cs : list) {
-			if (ConstatnsUtil.Currency.RMB.equals(cs.getCoin_name())) {
+			if (Constatns.Currency.RMB.equals(cs.getCoin_name())) {
 				cash = cs.getCoin_num() * cs.getMarket_price();
 				totalNum += cash;
-			} else if (ConstatnsUtil.Currency.USDT.equals(cs.getCoin_name())) {
+			} else if (Constatns.Currency.USDT.equals(cs.getCoin_name())) {
 				usdtNum = cs.getCoin_num();
 				totalNum += usdtNum;
 			} else {

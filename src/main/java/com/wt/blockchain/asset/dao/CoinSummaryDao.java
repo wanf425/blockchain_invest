@@ -7,7 +7,7 @@ import java.util.List;
 import com.mysql.jdbc.StringUtils;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.util.CommonUtil;
-import com.wt.blockchain.asset.util.ConstatnsUtil;
+import com.wt.blockchain.asset.util.Constatns;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
 
@@ -84,8 +84,8 @@ public class CoinSummaryDao extends BaseDao<CoinSummary> {
 				// 总市值
 				total += marketPrice * cs.getCoin_num();
 
-				if (ConstatnsUtil.Currency.USDT.equals(cs.getCoin_name())
-						|| ConstatnsUtil.Currency.RMB.equals(cs.getCoin_name())) {
+				if (Constatns.Currency.USDT.equals(cs.getCoin_name())
+						|| Constatns.Currency.RMB.equals(cs.getCoin_name())) {
 					// 人民币、USDT不计算 总花费、均价收益率和收益数
 					cs.setTotal_cost(0.0);
 					cs.setAvarange_price(0.0);

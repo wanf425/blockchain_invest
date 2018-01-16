@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wt.blockchain.asset.dto.CoinInfo;
-import com.wt.blockchain.asset.util.ConstatnsUtil;
+import com.wt.blockchain.asset.util.Constatns;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.xiaoleilu.hutool.db.Entity;
 
@@ -62,7 +62,7 @@ public class CoinInfoDao extends BaseDao<CoinInfo> {
 
 			for (CoinInfo en : list) {
 				session.insert(Entity.create("tc_coin_info").set("COIN_NAME", en.getCoin_name())
-						.set("MARKET_PRICE", en.getMarket_price()).set("PRICE_UNIT", ConstatnsUtil.Currency.USDT)
+						.set("MARKET_PRICE", en.getMarket_price()).set("PRICE_UNIT", Constatns.Currency.USDT)
 						.set("PERCENT", en.getPercent()));
 			}
 			session.commit();

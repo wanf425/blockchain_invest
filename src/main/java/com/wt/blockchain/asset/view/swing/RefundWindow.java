@@ -22,7 +22,7 @@ import com.wt.blockchain.asset.dao.ConstantsDao;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.dto.Constants;
 import com.wt.blockchain.asset.util.CommonUtil;
-import com.wt.blockchain.asset.util.ConstatnsUtil.ConstatnsKey;
+import com.wt.blockchain.asset.util.Constatns.ConstatnsKey;
 import com.wt.blockchain.asset.util.NumberUtil;
 
 public class RefundWindow {

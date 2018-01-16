@@ -33,10 +33,10 @@ import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinSummary;
 import com.wt.blockchain.asset.dto.Constants;
 import com.wt.blockchain.asset.util.CommonUtil;
-import com.wt.blockchain.asset.util.ConstatnsUtil.ConstatnsKey;
-import com.wt.blockchain.asset.util.ConstatnsUtil.Currency;
-import com.wt.blockchain.asset.util.ConstatnsUtil.Market;
-import com.wt.blockchain.asset.util.ConstatnsUtil.OpType;
+import com.wt.blockchain.asset.util.Constatns.ConstatnsKey;
+import com.wt.blockchain.asset.util.Constatns.Currency;
+import com.wt.blockchain.asset.util.Constatns.Market;
+import com.wt.blockchain.asset.util.Constatns.OpType;
 import com.wt.blockchain.asset.util.LogUtil;
 import com.wt.blockchain.asset.util.NumberUtil;
 

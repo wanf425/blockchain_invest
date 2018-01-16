@@ -2,11 +2,7 @@ package com.wt.blockchain.asset.util;
 
 import com.wt.blockchain.asset.dto.CoinInfo;
 
-public class ConstatnsUtil {
-
-	public interface MARKET {
-		public static String SYSTEM = "system"; // 系统默认
-	}
+public class Constatns {
 
 	public interface SETTLEMENT_STATE {
 		public static int IS_SETTLEMENT = 1; // 是
@@ -28,6 +24,7 @@ public class ConstatnsUtil {
 	public interface Market {
 		public static String OKOEX = "OKex";
 		public static String HUOBI = "HUOBI";
+		public static String SYSTEM = "system"; // 系统默认
 	}
 
 	public interface Currency {
