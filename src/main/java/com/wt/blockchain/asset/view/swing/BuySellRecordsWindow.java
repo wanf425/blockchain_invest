@@ -1,5 +1,8 @@
 package com.wt.blockchain.asset.view.swing;
 
+import static com.wt.blockchain.asset.util.NumberUtil.add;
+import static com.wt.blockchain.asset.util.NumberUtil.sub;
+
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +38,7 @@ import com.wt.blockchain.asset.util.ConstatnsUtil.Currency;
 import com.wt.blockchain.asset.util.ConstatnsUtil.Market;
 import com.wt.blockchain.asset.util.ConstatnsUtil.OpType;
 import com.wt.blockchain.asset.util.LogUtil;
+import com.wt.blockchain.asset.util.NumberUtil;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -43,7 +47,7 @@ public class BuySellRecordsWindow {
 	private ConstantsDao constantsDao = new ConstantsDao();
 	private CoinDetailDao coinDetailDao = new CoinDetailDao();
 	private CoinSummaryDao coinSummaryDao = new CoinSummaryDao();
-	private DateFormat df = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Map<String, CoinSummary> summaryMap = new HashMap<>();
 
 	private JFrame frame;
@@ -57,9 +61,9 @@ public class BuySellRecordsWindow {
 	private JTextField totalCostTF;
 	private JComboBox<Constants> totalCostCB;
 	private JLabel serviceChargePercentLA;
-	private JTextField serviceChargePercentTF; // 手续费
+	private JTextField serviceChargePercentTF; // 手续费率
 	private JLabel serviceChargeLA;
-	private JTextField serviceChargeTF;
+	private JTextField serviceChargeTF; // 手续费
 	private JLabel opTimeLA;
 	private JTextField opTimeTF;
 	private JLabel avarangeLA;
@@ -70,10 +74,12 @@ public class BuySellRecordsWindow {
 	private JLabel totalCostUSDValue;
 	private JLabel accountNumLA;
 	private JLabel accountNum;
+	private JComboBox<Constants> serviceChargeCB; // 手续费单位
 
 	/**
 	 * Launch the application.
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 */
 	public static void main(String[] args) throws ParseException {
 		EventQueue.invokeLater(new Runnable() {
@@ -105,10 +111,10 @@ public class BuySellRecordsWindow {
 		list.forEach(t -> summaryMap.put(t.getCoin_name(), t));
 
 		this.frame.setVisible(true);
-		
-		Constants c = (Constants)coinNameCB.getSelectedItem();
+
+		Constants c = (Constants) coinNameCB.getSelectedItem();
 		CoinSummary cs = summaryMap.get(c.getKey());
-	    accountNum.setText(cs != null ? cs.getTotal_cost().toString() : "");
+		accountNum.setText(cs != null ? cs.getTotal_cost().toString() : "");
 	}
 
 	/**
@@ -172,9 +178,11 @@ public class BuySellRecordsWindow {
 		frame.getContentPane().add(serviceChargeLA, "cell 0 7,alignx trailing");
 
 		serviceChargeTF = new JTextField();
-		serviceChargeTF.setEditable(false);
-		frame.getContentPane().add(serviceChargeTF, "cell 1 7 2 1,growx");
+		frame.getContentPane().add(serviceChargeTF, "cell 1 7,growx");
 		serviceChargeTF.setColumns(10);
+
+		serviceChargeCB = new JComboBox<Constants>();
+		frame.getContentPane().add(serviceChargeCB, "cell 2 7,growx");
 
 		opTimeLA = new JLabel("操作时间：");
 		frame.getContentPane().add(opTimeLA, "cell 0 8,alignx trailing");
@@ -240,7 +248,7 @@ public class BuySellRecordsWindow {
 		CoinSummary cs = summaryMap.get(constants.getValue());
 
 		Double accountNum = 0.0;
-		Double coinNum = CommonUtil.toDouble(coinNumTF.getText());
+		Double coinNum = NumberUtil.toDouble(coinNumTF.getText());
 
 		if (cs != null) {
 			if (OpType.buy.equals(opType.getKey())) {
@@ -353,6 +361,7 @@ public class BuySellRecordsWindow {
 		String coinNum = coinNumTF.getText();
 		String totalCost = totalCostTF.getText();
 		String totalCostCurrency = ((Constants) totalCostCB.getSelectedItem()).getKey();
+		String servcieChargeCurrency = ((Constants) serviceChargeCB.getSelectedItem()).getKey();
 		String serviceCharge = serviceChargeTF.getText();
 		String opTime = opTimeTF.getText();
 		String avarangePrice = avarangeTF.getText();
@@ -372,14 +381,27 @@ public class BuySellRecordsWindow {
 			try {
 				cd.setOp_type(opType);
 				cd.setCoin_name(coinName);
-				cd.setCoin_num(Double.valueOf(coinNum));
-				cd.setTotal_cost(Double.valueOf(totalCost));
 				cd.setTotal_cost_currency(totalCostCurrency);
 				cd.setService_charge(Double.valueOf(serviceCharge));
+				cd.setServcieChargeCurrency(servcieChargeCurrency);
 				cd.setOp_time(df.parse(opTime));
 				cd.setAvarange_price(Double.valueOf(avarangePrice));
 				cd.setOp_market(opMarket);
 				cd.setMonetary_unit(totalCostCurrency);
+
+				// 以交易法币支付手续费
+				if (totalCostCurrency.equals(servcieChargeCurrency)) {
+					// 总花费 = 代币花费 + 手续费
+					cd.setTotal_cost(add(Double.valueOf(totalCost), cd.getService_charge()));
+					cd.setCoin_num(Double.valueOf(coinNum));
+				} else {
+					// 以代币支付手续费
+					// 总花费 = 代币花费
+					cd.setTotal_cost(Double.valueOf(totalCost));
+					// 代币数量 = 预期买入数量 - 手续费
+					cd.setCoin_num(sub(Double.valueOf(coinNum), cd.getService_charge()));
+				}
+
 			} catch (Exception e) {
 				LogUtil.print("页面数据类型不正确", e);
 				throw new Exception("页面数据类型不正确");
@@ -400,9 +422,18 @@ public class BuySellRecordsWindow {
 		// 操作类型 下拉框
 		List<Constants> opTypes = constantsDao.queryByType(ConstatnsKey.OP_TYPE);
 		CommonUtil.initialComboBox(opTypes, opTypeCB, c -> c.getValue());
+
 		// 币种 下拉框
 		List<Constants> coinNames = constantsDao.queryByType(ConstatnsKey.COIN_NAME);
 		CommonUtil.initialComboBox(coinNames, coinNameCB, c -> c.getValue());
+
+		// 手续费币种下拉框
+		CommonUtil.initialComboBox(coinNames, serviceChargeCB, c -> c.getValue());
+		coinNames.forEach(t -> {
+			if (Currency.USDT.equals(t.getKey())) {
+				serviceChargeCB.setSelectedItem(t);
+			}
+		});
 
 		// 货币类型 下拉框
 		List<Constants> currencyType = constantsDao.queryByType(ConstatnsKey.CURRENCY_TYPE);
@@ -427,5 +458,5 @@ public class BuySellRecordsWindow {
 		// 操作时间
 		opTimeTF.setText(df.format(new Date()));
 	}
-	
+
 }

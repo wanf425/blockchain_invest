@@ -14,7 +14,8 @@ public class CoinDetail extends BaseDto {
 	private Double coin_num;
 	private Double total_cost;
 	private String total_cost_currency; // 货币单位
-	private Double service_charge;
+	private Double service_charge; // 手续费金额
+	private String servcieChargeCurrency; // 手续费单位
 	private String monetary_unit;
 	private Double avarange_price;
 	private String op_type;
@@ -170,6 +171,14 @@ public class CoinDetail extends BaseDto {
 
 	public void setCreate_Date(Date create_Date) {
 		this.create_Date = create_Date;
+	}
+
+	public String getServcieChargeCurrency() {
+		return servcieChargeCurrency;
+	}
+
+	public void setServcieChargeCurrency(String servcieChargeCurrency) {
+		this.servcieChargeCurrency = servcieChargeCurrency;
 	}
 
 }

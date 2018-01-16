@@ -13,11 +13,11 @@ import com.mysql.jdbc.StringUtils;
 import com.wt.blockchain.asset.dto.CoinDetail;
 import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.dto.CoinSummary;
-import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil;
 import com.wt.blockchain.asset.util.ConstatnsUtil.Market;
 import com.wt.blockchain.asset.util.ConstatnsUtil.OpType;
 import com.wt.blockchain.asset.util.LogUtil;
+import com.wt.blockchain.asset.util.NumberUtil;
 import com.xiaoleilu.hutool.db.Entity;
 
 public class CoinDetailDao extends BaseDao<CoinDetail> {
@@ -134,10 +134,10 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			// 插入代币明细数据
 			Entity entity = Entity.create("tb_coin_detail").set("COIN_NAME", detail.getCoin_name())
 					.set("COIN_NUM", detail.getCoin_num()).set("TOTAL_COST", detail.getTotal_cost())
-					.set("SERVICE_CHARGE", 0).set("MONETARY_UNIT", detail.getMonetary_unit())
-					.set("AVARANGE_PRICE", detail.getAvarange_price()).set("OP_TYPE", detail.getOp_type())
-					.set("OP_TIME", detail.getOp_time()).set("OP_MARKET", detail.getOp_market())
-					.set("MONETARY_UNIT", detail.getMonetary_unit());
+					.set("SERVICE_CHARGE", getServiceCharge(detail.getCoin_name(), detail))
+					.set("MONETARY_UNIT", detail.getMonetary_unit()).set("AVARANGE_PRICE", detail.getAvarange_price())
+					.set("OP_TYPE", detail.getOp_type()).set("OP_TIME", detail.getOp_time())
+					.set("OP_MARKET", detail.getOp_market()).set("MONETARY_UNIT", detail.getMonetary_unit());
 			session.insert(entity);
 
 			// 修改代币汇总数据
@@ -146,8 +146,9 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			// 插入货币明细数据
 			Entity entity2 = Entity.create("tb_coin_detail").set("COIN_NAME", detail.getMonetary_unit())
 					.set("COIN_NUM", detail.getTotal_cost()).set("TOTAL_COST", detail.getTotal_cost())
-					.set("SERVICE_CHARGE", detail.getService_charge()).set("MONETARY_UNIT", detail.getMonetary_unit())
-					.set("AVARANGE_PRICE", 0).set("OP_TYPE", ConstatnsUtil.reverseOpType(detail.getOp_type()))
+					.set("SERVICE_CHARGE", getServiceCharge(detail.getTotal_cost_currency(), detail))
+					.set("MONETARY_UNIT", detail.getMonetary_unit()).set("AVARANGE_PRICE", 0)
+					.set("OP_TYPE", ConstatnsUtil.reverseOpType(detail.getOp_type()))
 					.set("OP_TIME", detail.getOp_time()).set("OP_MARKET", detail.getOp_market())
 					.set("MONETARY_UNIT", detail.getMonetary_unit());
 			session.insert(entity2);
@@ -163,19 +164,18 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 		}
 	}
 
+	private Double getServiceCharge(String coinName, CoinDetail detail) {
+		if (detail.getServcieChargeCurrency().equals(coinName)) {
+			return detail.getService_charge();
+		} else {
+			return 0.0;
+		}
+	}
+
 	private void updateSummary(String coinName) throws SQLException {
 		String sql = "SELECT OP_TYPE,COIN_NUM,TOTAL_COST,SERVICE_CHARGE,MONETARY_UNIT "
 				+ " FROM tb_coin_detail WHERE SETTLEMENT_VERSION is null and COIN_NAME = ? ";
 
-		// String sql = " SELECT " + " d.OP_TYPE, " + " sum(d.COIN_NUM) as
-		// COIN_NUM, "
-		// + " sum(case d.MONETARY_UNIT when 'RMB' then d.TOTAL_COST / 6.64 else
-		// d.TOTAL_COST end) as TOTAL_COST, "
-		// + " sum(case d.MONETARY_UNIT when 'RMB' then d.SERVICE_CHARGE / 6.64
-		// else d.SERVICE_CHARGE end) as SERVICE_CHARGE "
-		// + " FROM tb_coin_detail d " + " WHERE d.SETTLEMENT_VERSION is null
-		// and d.COIN_NAME = ? "
-		// + " GROUP BY d.OP_TYPE ORDER BY d.OP_TYPE ";
 		List<Entity> list = session.query(sql, new Object[] { coinName });
 
 		CoinSummary csSummary = new CoinSummary();
@@ -202,7 +202,7 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			}
 		}
 
-		csSummary.setAvarange_price(CommonUtil.divide(csSummary.getTotal_cost(), csSummary.getCoin_num()));
+		csSummary.setAvarange_price(NumberUtil.divide(csSummary.getTotal_cost(), csSummary.getCoin_num()));
 		csSummary.setMonetary_unit(ConstatnsUtil.Currency.USDT);
 
 		// 查询汇总记录是否存在

@@ -166,24 +166,4 @@ public class CommonUtil {
 		return new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(date);
 	}
 
-	public static double divide(Double num1, Double num2) {
-		if (num2 == null || num2 == 0.0) {
-			return 0.0;
-		} else {
-			return num1 / num2;
-		}
-	}
-	
-	public static double toDouble(String value) {
-		Double result = 0.0;
-		
-		try {
-			result = Double.valueOf(value);
-		} catch (Exception e) {
-			LogUtil.print("toDouble err " + e.getMessage());
-		}
-		
-		return result;
-	}
-
 }

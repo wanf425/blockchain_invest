@@ -9,6 +9,53 @@ public class NumberUtil {
 	 * 
 	 * @param base
 	 * @param subtrahend
+	 * @return
+	 */
+	public static Double sub(Object base, Object subtrahend) {
+		return sub(base, subtrahend, 0.0);
+	}
+
+	/**
+	 * 加法运算
+	 * 
+	 * @param base
+	 * @param augend
+	 * @param nullValue
+	 * @return
+	 */
+	public static Double add(Object base, Object augend) {
+		return add(base, augend, 0.0);
+	}
+
+	/**
+	 * 除法运算
+	 * 
+	 * @param base
+	 * @param divisor
+	 * @param nullValue
+	 * @return
+	 */
+	public static Double divide(Object base, Object divisor) {
+		return divide(base, divisor, 0.0);
+	}
+
+	/**
+	 * 乘法运算
+	 * 
+	 * @param base
+	 * @param multiplicand
+	 * @param nullValue
+	 * @return
+	 */
+	public static Double multiply(Object base, Object multiplicand) {
+		return multiply(base, multiplicand, 0.0);
+	}
+
+	/**
+	 * 减法运算
+	 * 
+	 * @param base
+	 * @param subtrahend
 	 * @param nullValue
 	 * @return
 	 */
@@ -47,7 +94,7 @@ public class NumberUtil {
 
 		return result;
 	}
-	
+
 	/**
 	 * 除法运算
 	 * 
@@ -69,7 +116,7 @@ public class NumberUtil {
 
 		return result;
 	}
-	
+
 	/**
 	 * 乘法运算
 	 * 
@@ -90,5 +137,25 @@ public class NumberUtil {
 		}
 
 		return result;
+	}
+
+	public static double toDouble(String value) {
+		Double result = 0.0;
+		
+		try {
+			result = Double.valueOf(value);
+		} catch (Exception e) {
+			LogUtil.print("toDouble err " + e.getMessage());
+		}
+		
+		return result;
+	}
+
+	public static double divide(Double num1, Double num2) {
+		if (num2 == null || num2 == 0.0) {
+			return 0.0;
+		} else {
+			return num1 / num2;
+		}
 	}
 }
