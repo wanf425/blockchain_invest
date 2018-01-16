@@ -34,7 +34,8 @@ public class HistoryWindow {
 	private JTextPane historyTF = new JTextPane();
 	private JScrollPane jsp = new JScrollPane(historyTF);
 	private String coinName;
-
+	private JButton refundBtn = new JButton("补差额");
+	private RefundWindow refundWindow = null;
 	private CoinDetailDao coinDetailDao = new CoinDetailDao();
 
 	// 拼装历史数据
@@ -88,12 +89,14 @@ public class HistoryWindow {
 								.addGroup(groupLayout.createSequentialGroup().addComponent(coinNameLA)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(coinNameLA2)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(settelmentBtn)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(cancelBtn)))
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(cancelBtn)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(refundBtn)))
 						.addContainerGap(19, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup().addGap(14)
 						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(settelmentBtn)
-								.addComponent(coinNameLA).addComponent(coinNameLA2).addComponent(cancelBtn))
+								.addComponent(coinNameLA).addComponent(coinNameLA2).addComponent(cancelBtn)
+								.addComponent(refundBtn))
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 420, GroupLayout.PREFERRED_SIZE)
 						.addContainerGap(109, Short.MAX_VALUE)));
@@ -228,6 +231,25 @@ public class HistoryWindow {
 					JOptionPane.showMessageDialog(null, "撤销失败！" + exc.getMessage());
 				}
 
+			}
+		});
+
+		// 补差额
+		refundBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							if (refundWindow == null) {
+								refundWindow = new RefundWindow();
+							} else {
+								refundWindow.show();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 			}
 		});
 	}

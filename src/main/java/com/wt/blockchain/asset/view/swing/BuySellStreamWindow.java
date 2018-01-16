@@ -57,10 +57,8 @@ public class BuySellStreamWindow extends JFrame {
 	private BuySellRecordsWindow buySellRecordsWindow = null;
 	private PutMoneyWindow putMoneyWindow = null;
 	private HistoryWindow historyWindow = null;
-	private RefundWindow refundWindow = null;
 
 	private String queryCoinName = "";
-	private final JButton refundBtn = new JButton("补差额");
 
 	/**
 	 * Launch the application.
@@ -127,8 +125,6 @@ public class BuySellStreamWindow extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(infoBtn)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(refundBtn)
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(assetBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
@@ -138,13 +134,12 @@ public class BuySellStreamWindow extends JFrame {
 					.addGap(14)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(assetBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(queryBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(buySellBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(coinNameLA)
 						.addComponent(putBtn)
 						.addComponent(infoBtn)
-						.addComponent(refundBtn))
+						.addComponent(assetBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -336,25 +331,6 @@ public class BuySellStreamWindow extends JFrame {
 								coinInfoWindow = new CoinInfoWindow();
 							} else {
 								coinInfoWindow.show();
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		});
-		
-		// 补差额
-		refundBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							if (refundWindow == null) {
-								refundWindow = new RefundWindow();
-							} else {
-								refundWindow.show();
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

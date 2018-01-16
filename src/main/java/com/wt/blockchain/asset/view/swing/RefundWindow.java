@@ -37,7 +37,7 @@ public class RefundWindow {
 	private JButton saveBtn = new JButton("保存"); // 保存按钮
 	private JLabel currentCoinNumValue = new JLabel(""); // 当前数量
 	private JLabel refundNumValue = new JLabel(""); // 预期数量
-	private final JLabel remarkLA = new JLabel("备注");
+	private final JLabel remarkLA = new JLabel("备注：");
 	private final JTextField remarkTF = new JTextField();
 
 	/**
