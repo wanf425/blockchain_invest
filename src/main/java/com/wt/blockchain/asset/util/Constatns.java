@@ -14,8 +14,14 @@ public class Constatns {
 		public static String COIN_NAME = "coinName"; // 币种
 		public static String CURRENCY_TYPE = "currencyType"; // 货币类型
 		public static String MARKET = "market"; // 交易平台
+		public static String MAX_DETAIL_ID = "maxDetailID"; // 已备份的明细交易最大ID
 	}
 
+	public interface MaxDetailID {
+		public static String BACKUP_ID = "backupID"; // 备份时明细表最大ID
+		public static String ROLLBACK_ID = "rollbackID"; // 回滚ID
+	}
+	
 	public interface OpType {
 		public static String buy = "1";
 		public static String sell = "2";

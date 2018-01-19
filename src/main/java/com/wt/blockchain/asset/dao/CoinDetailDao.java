@@ -269,4 +269,25 @@ public class CoinDetailDao extends BaseDao<CoinDetail> {
 			throw new Exception("操作失败！");
 		}
 	}
+	
+	/**
+	 * 查询比指定ID大的明细数据
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<CoinDetail> queryById(int id) {
+		List<CoinDetail> result = new ArrayList<>();
+
+		try {
+			String sql = "select * from tb_coin_detail where ID > ? ORDER BY ID DESC";
+			List<Entity> list = runner.query(sql, new Object[] { id });
+
+			list.forEach(en -> result.add(en.toBeanIgnoreCase(CoinDetail.class)));
+		} catch (Exception e) {
+			LogUtil.print("query err", e);
+		}
+
+		return result;
+	}
 }

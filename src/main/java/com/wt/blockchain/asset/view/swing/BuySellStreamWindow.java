@@ -53,10 +53,13 @@ public class BuySellStreamWindow extends JFrame {
 	private JButton infoBtn = new JButton("信息录入");
 	private JButton putBtn = new JButton("资金投入");
 	private JLabel totalNumLA = new JLabel("资产统计");
+	private JButton backUpBtn = new JButton("数据备份");
+
 	private CoinInfoWindow coinInfoWindow = null;
 	private BuySellRecordsWindow buySellRecordsWindow = null;
 	private PutMoneyWindow putMoneyWindow = null;
 	private HistoryWindow historyWindow = null;
+	private BackupWindow backupWindow = null;
 
 	private String queryCoinName = "";
 
@@ -90,7 +93,7 @@ public class BuySellStreamWindow extends JFrame {
 		TableModel dataModel = getTableModel();
 		table = new JTable(dataModel);
 		// 添加排序
-		table.setRowSorter(new TableRowSorter<TableModel>(dataModel)); 
+		table.setRowSorter(new TableRowSorter<TableModel>(dataModel));
 		JScrollPane jsp = new JScrollPane(table);
 		// 右对齐
 		DefaultTableCellRenderer r = new DefaultTableCellRenderer();
@@ -102,50 +105,39 @@ public class BuySellStreamWindow extends JFrame {
 		table.getColumnModel().getColumn(0).setCellRenderer(l);
 		// 列宽
 		table.getColumnModel().getColumn(0).setPreferredWidth(15);
-		
-		
+
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING).addGroup(gl_contentPane
+				.createSequentialGroup().addContainerGap()
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(totalNumLA, GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)
 						.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(coinNameLA)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(queryBtn, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(buySellBtn)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(putBtn, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(infoBtn)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(assetBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(14)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup().addComponent(coinNameLA)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(queryBtn, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(buySellBtn)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(putBtn, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(infoBtn)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(backUpBtn)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(assetBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
+				.addContainerGap()));
+		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
+				.createSequentialGroup().addGap(14)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(coinNameCB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
 						.addComponent(queryBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(buySellBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(coinNameLA)
-						.addComponent(putBtn)
-						.addComponent(infoBtn)
-						.addComponent(assetBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(totalNumLA)
-					.addGap(92))
-		);
+						.addComponent(coinNameLA).addComponent(putBtn).addComponent(infoBtn)
+						.addComponent(assetBtn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(backUpBtn))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(totalNumLA).addGap(92)));
 		contentPane.setLayout(gl_contentPane);
 
 		initDate();
@@ -339,7 +331,22 @@ public class BuySellStreamWindow extends JFrame {
 				});
 			}
 		});
-		
+
+		// 备份
+		backUpBtn.addActionListener(t -> EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					if (backupWindow == null) {
+						backupWindow = new BackupWindow();
+					} else {
+						backupWindow.show();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}));
+
 		// 列表双击
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

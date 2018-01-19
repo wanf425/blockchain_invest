@@ -62,7 +62,7 @@ public class CommonUtil {
 
 		try {
 			if (num != null) {
-				String defalutFormate = "#.00";
+				String defalutFormate = "#0.00";
 
 				if (formate != null && formate.length > 0) {
 					defalutFormate = formate[0];
