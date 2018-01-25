@@ -52,10 +52,14 @@ public class CoinInfoWindow extends BaseWindow {
 	 */
 	public CoinInfoWindow() {
 		initialize();
-		frame.setVisible(true);
+		refresh();
 	}
 
 	public void show() {
+		refresh();
+	}
+	
+	public void refresh() {
 		frame.setVisible(true);
 	}
 

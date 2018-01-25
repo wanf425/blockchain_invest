@@ -52,7 +52,7 @@ public class EarningWindow extends BaseWindow {
 		refresh();
 	}
 
-	private void refresh() {
+	public void refresh() {
 		this.frame.setVisible(true);
 		// TODO
 	}

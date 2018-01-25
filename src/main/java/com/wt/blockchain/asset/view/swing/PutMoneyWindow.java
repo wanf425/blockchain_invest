@@ -42,10 +42,14 @@ public class PutMoneyWindow extends BaseWindow {
 	 */
 	public PutMoneyWindow() {
 		initialize();
-		this.frame.setVisible(true);
+		refresh();
 	}
 
 	public void show() {
+		refresh();
+	}
+	
+	public void refresh() {
 		this.frame.setVisible(true);
 	}
 

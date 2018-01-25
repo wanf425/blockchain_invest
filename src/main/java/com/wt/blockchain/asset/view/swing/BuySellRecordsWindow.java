@@ -105,7 +105,7 @@ public class BuySellRecordsWindow extends BaseWindow {
 		refresh();
 	}
 
-	private void refresh() {
+	public void refresh() {
 		// 查询汇总数据
 		List<CoinSummary> list = coinSummaryDao.queryAll();
 		list.forEach(t -> summaryMap.put(t.getCoin_name(), t));

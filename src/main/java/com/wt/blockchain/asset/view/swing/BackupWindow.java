@@ -59,7 +59,7 @@ public class BackupWindow extends BaseWindow {
 		refresh();
 	}
 
-	private void refresh() {
+	public void refresh() {
 		initDate();
 	}
 

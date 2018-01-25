@@ -26,7 +26,6 @@ import com.wt.blockchain.asset.util.Constatns;
 
 public class HistoryWindow extends BaseWindow {
 
-	private static final long serialVersionUID = 2608099712684138825L;
 	private JFrame frame;
 	private JLabel coinNameLA = new JLabel("代币：");
 	private JLabel coinNameLA2 = new JLabel("coinName");
@@ -77,7 +76,8 @@ public class HistoryWindow extends BaseWindow {
 	private void initialize(String coinName) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 800, 600);
-		resetFrame(frame);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		historyTF.setEditable(false);
 
