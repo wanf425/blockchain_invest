@@ -1,6 +1,5 @@
 package com.wt.blockchain.asset.view.swing;
 
-import static com.wt.blockchain.asset.util.NumberUtil.add;
 import static com.wt.blockchain.asset.util.NumberUtil.sub;
 
 import java.awt.EventQueue;
@@ -42,8 +41,9 @@ import com.wt.blockchain.asset.util.NumberUtil;
 
 import net.miginfocom.swing.MigLayout;
 
-public class BuySellRecordsWindow {
+public class BuySellRecordsWindow extends BaseWindow {
 
+	private static final long serialVersionUID = 3375446484591175070L;
 	private ConstantsDao constantsDao = new ConstantsDao();
 	private CoinDetailDao coinDetailDao = new CoinDetailDao();
 	private CoinSummaryDao coinSummaryDao = new CoinSummaryDao();
@@ -123,8 +123,7 @@ public class BuySellRecordsWindow {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 336, 427);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		resetFrame(frame);
 		frame.getContentPane().setLayout(new MigLayout("", "[][grow][grow]", "[][][][][][][][][][][][][][][]"));
 
 		opTypeLA = new JLabel("操作类型：");
@@ -392,7 +391,7 @@ public class BuySellRecordsWindow {
 				// 以交易法币支付手续费
 				if (totalCostCurrency.equals(servcieChargeCurrency)) {
 					// 总花费 = 代币花费 + 手续费
-					cd.setTotal_cost(add(Double.valueOf(totalCost), cd.getService_charge()));
+					cd.setTotal_cost(NumberUtil.add(Double.valueOf(totalCost), cd.getService_charge()));
 					cd.setCoin_num(Double.valueOf(coinNum));
 				} else {
 					// 以代币支付手续费

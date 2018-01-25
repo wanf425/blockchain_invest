@@ -22,7 +22,8 @@ import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.LogUtil;
 
-public class CoinInfoWindow {
+public class CoinInfoWindow extends BaseWindow {
+	private static final long serialVersionUID = -9191839187194468465L;
 	private CoinInfoDao coinInfoDao = new CoinInfoDao();
 	private JFrame frame;
 	private JLabel lbljson = new JLabel("使用JSON格式录入代币信息");
@@ -57,47 +58,34 @@ public class CoinInfoWindow {
 	public void show() {
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 689, 315);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		resetFrame(frame);
 
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(22)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+				.createSequentialGroup().addGap(22)
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(lbljson, GroupLayout.PREFERRED_SIZE, 170, GroupLayout.PREFERRED_SIZE)
 						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(formateBtn)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(saveBtn))
-								.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 647, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)))
-					.addContainerGap(17, Short.MAX_VALUE))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lbljson)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(saveBtn)
-						.addComponent(formateBtn))
-					.addGap(14))
-		);
+								.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+										.addGroup(groupLayout.createSequentialGroup().addComponent(formateBtn)
+												.addPreferredGap(ComponentPlacement.RELATED).addComponent(saveBtn))
+										.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 647, GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(ComponentPlacement.RELATED)))
+				.addContainerGap(17, Short.MAX_VALUE)));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(lbljson)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addGroup(groupLayout
+								.createParallelGroup(Alignment.BASELINE).addComponent(saveBtn).addComponent(formateBtn))
+						.addGap(14)));
 		frame.getContentPane().setLayout(groupLayout);
 
 		initDate();

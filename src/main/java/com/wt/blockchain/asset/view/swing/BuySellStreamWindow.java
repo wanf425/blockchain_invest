@@ -34,7 +34,7 @@ import com.wt.blockchain.asset.util.Constatns;
 import com.wt.blockchain.asset.util.Constatns.ConstatnsKey;
 import com.wt.blockchain.asset.util.LogUtil;
 
-public class BuySellStreamWindow extends JFrame {
+public class BuySellStreamWindow extends BaseWindow {
 
 	private static final long serialVersionUID = 1L;
 

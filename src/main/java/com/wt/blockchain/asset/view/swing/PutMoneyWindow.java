@@ -14,8 +14,9 @@ import javax.swing.JTextField;
 
 import com.wt.blockchain.asset.dao.CoinDetailDao;
 
-public class PutMoneyWindow {
+public class PutMoneyWindow extends BaseWindow {
 
+	private static final long serialVersionUID = -9155959405640988640L;
 	private JFrame frame;
 	private JTextField putMoneyTF;
 	private JLabel putMoneyLA = new JLabel("投入金额（RMB）：");
@@ -54,9 +55,7 @@ public class PutMoneyWindow {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 262, 91);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		resetFrame(frame);
 
 		putMoneyTF = new JTextField();
 		putMoneyTF.setColumns(10);

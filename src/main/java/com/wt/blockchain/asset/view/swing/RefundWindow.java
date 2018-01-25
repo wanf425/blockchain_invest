@@ -25,7 +25,9 @@ import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.Constatns.ConstatnsKey;
 import com.wt.blockchain.asset.util.NumberUtil;
 
-public class RefundWindow {
+public class RefundWindow extends BaseWindow {
+
+	private static final long serialVersionUID = -91315274629841966L;
 	private ConstantsDao constantsDao = new ConstantsDao();
 	private CoinSummaryDao coinSummaryDao = new CoinSummaryDao();
 	private CoinDetailDao coinDetailDao = new CoinDetailDao();
@@ -88,8 +90,7 @@ public class RefundWindow {
 		remarkTF.setColumns(10);
 		frame = new JFrame();
 		frame.setBounds(100, 100, 213, 228);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		resetFrame(frame);
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0 };
