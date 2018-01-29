@@ -61,7 +61,7 @@ public class BuySellStreamWindow extends BaseWindow {
 	private HistoryWindow historyWindow = null;
 	private BackupWindow backupWindow = null;
 	private EarningWindow earningWindow = null;
-	
+
 	private String queryCoinName = "";
 
 	/**
@@ -261,6 +261,11 @@ public class BuySellStreamWindow extends BaseWindow {
 		return list;
 	}
 
+	public void doQuery() {
+		summaryList = querySummary();
+		table.updateUI();
+	}
+	
 	/**
 	 * 添加监听
 	 */
@@ -270,8 +275,7 @@ public class BuySellStreamWindow extends BaseWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				queryCoinName = ((Constants) coinNameCB.getSelectedItem()).getKey();
-				summaryList = querySummary();
-				table.updateUI();
+				doQuery();
 			}
 		});
 
@@ -315,13 +319,14 @@ public class BuySellStreamWindow extends BaseWindow {
 		});
 
 		// 信息录入
+		BuySellStreamWindow window = this;
 		infoBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
 							if (coinInfoWindow == null) {
-								coinInfoWindow = new CoinInfoWindow();
+								coinInfoWindow = new CoinInfoWindow(window);
 							} else {
 								coinInfoWindow.show();
 							}

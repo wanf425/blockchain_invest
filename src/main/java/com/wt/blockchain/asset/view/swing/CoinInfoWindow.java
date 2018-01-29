@@ -22,6 +22,12 @@ import com.wt.blockchain.asset.dto.CoinInfo;
 import com.wt.blockchain.asset.util.CommonUtil;
 import com.wt.blockchain.asset.util.LogUtil;
 
+/**
+ * 信息录入
+ * 
+ * @author wangtao
+ *
+ */
 public class CoinInfoWindow extends BaseWindow {
 	private static final long serialVersionUID = -9191839187194468465L;
 	private CoinInfoDao coinInfoDao = new CoinInfoDao();
@@ -31,6 +37,7 @@ public class CoinInfoWindow extends BaseWindow {
 	private JEditorPane cionInfoEP = new JEditorPane();
 	private JScrollPane jsp = new JScrollPane(cionInfoEP);
 	private final JButton saveBtn = new JButton("保存");
+	private BuySellStreamWindow buySellStreamWindow = null;
 
 	/**
 	 * Launch the application.
@@ -39,7 +46,7 @@ public class CoinInfoWindow extends BaseWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new CoinInfoWindow();
+					new CoinInfoWindow(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -50,7 +57,8 @@ public class CoinInfoWindow extends BaseWindow {
 	/**
 	 * Create the application.
 	 */
-	public CoinInfoWindow() {
+	public CoinInfoWindow(BuySellStreamWindow buySellStreamWindow) {
+		this.buySellStreamWindow = buySellStreamWindow;
 		initialize();
 		refresh();
 	}
@@ -58,7 +66,7 @@ public class CoinInfoWindow extends BaseWindow {
 	public void show() {
 		refresh();
 	}
-	
+
 	public void refresh() {
 		frame.setVisible(true);
 	}
@@ -113,6 +121,9 @@ public class CoinInfoWindow extends BaseWindow {
 
 					JOptionPane.showMessageDialog(null, "保存成功");
 					initDate();
+					if (buySellStreamWindow != null) {
+						buySellStreamWindow.doQuery();
+					}
 				} catch (Exception exc) {
 					JOptionPane.showMessageDialog(null, "保存失败");
 					LogUtil.print("", exc);
