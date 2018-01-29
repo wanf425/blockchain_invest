@@ -109,7 +109,7 @@ public class NumberUtil {
 		try {
 			BigDecimal baseBD = new BigDecimal(base.toString());
 			BigDecimal divisorBD = new BigDecimal(divisor.toString());
-			result = baseBD.divide(divisorBD).doubleValue();
+			result = baseBD.divide(divisorBD, 4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
 		} catch (Exception e) {
 			LogUtil.print("divide err " + e.getMessage());
 		}
@@ -141,13 +141,13 @@ public class NumberUtil {
 
 	public static double toDouble(String value) {
 		Double result = 0.0;
-		
+
 		try {
 			result = Double.valueOf(value);
 		} catch (Exception e) {
 			LogUtil.print("toDouble err " + e.getMessage());
 		}
-		
+
 		return result;
 	}
 

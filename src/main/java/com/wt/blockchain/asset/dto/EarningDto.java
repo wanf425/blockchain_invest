@@ -1,9 +1,11 @@
 package com.wt.blockchain.asset.dto;
 
+import java.util.Date;
+
 public class EarningDto extends BaseDto {
 
 	private int id;
-	private Double settlement_date; // 结算日期
+	private Date settlement_date; // 结算日期
 	private Double total_invest; // 总投入
 	private Double current_invest; // 当期投入
 	private Double increase_rate; // 增长率(去当期)
@@ -15,10 +17,10 @@ public class EarningDto extends BaseDto {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public Double getSettlement_date() {
+	public Date getSettlement_date() {
 		return settlement_date;
 	}
-	public void setSettlement_date(Double settlement_date) {
+	public void setSettlement_date(Date settlement_date) {
 		this.settlement_date = settlement_date;
 	}
 	public Double getTotal_invest() {

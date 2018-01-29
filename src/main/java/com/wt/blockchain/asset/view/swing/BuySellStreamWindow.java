@@ -60,7 +60,8 @@ public class BuySellStreamWindow extends BaseWindow {
 	private PutMoneyWindow putMoneyWindow = null;
 	private HistoryWindow historyWindow = null;
 	private BackupWindow backupWindow = null;
-
+	private EarningWindow earningWindow = null;
+	
 	private String queryCoinName = "";
 
 	/**
@@ -347,6 +348,21 @@ public class BuySellStreamWindow extends BaseWindow {
 			}
 		}));
 
+		// 资产统计 TODO
+		assetBtn.addActionListener(t -> EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					if (earningWindow == null) {
+						earningWindow = new EarningWindow();
+					} else {
+						earningWindow.show();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}));
+		
 		// 列表双击
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

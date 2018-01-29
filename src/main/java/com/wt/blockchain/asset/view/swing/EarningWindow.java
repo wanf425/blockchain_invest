@@ -1,13 +1,13 @@
 package com.wt.blockchain.asset.view.swing;
 
 import java.awt.EventQueue;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import com.wt.blockchain.asset.dao.EarningDao;
 import com.wt.blockchain.asset.dto.EarningDto;
 import com.wt.blockchain.asset.util.CommonUtil;
 
@@ -24,6 +25,8 @@ public class EarningWindow extends BaseWindow {
 	private JFrame frame;
 	private JTable table;
 	private List<EarningDto> earningList = null;
+	private EarningDao earningDao = new EarningDao();
+	private JButton button = new JButton("结算");
 
 	/**
 	 * Launch the application.
@@ -54,7 +57,8 @@ public class EarningWindow extends BaseWindow {
 
 	public void refresh() {
 		this.frame.setVisible(true);
-		// TODO
+		earningList = earningDao.query();
+		table.updateUI();
 	}
 
 	/**
@@ -62,10 +66,8 @@ public class EarningWindow extends BaseWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 510, 300);
 		resetFrame(frame);
-
-		JButton button = new JButton("结算");
 
 		table = new JTable();
 		TableModel dataModel = getTableModel();
@@ -79,20 +81,36 @@ public class EarningWindow extends BaseWindow {
 				.createSequentialGroup().addContainerGap()
 				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup().addGap(6).addComponent(jsp,
-								GroupLayout.PREFERRED_SIZE, 417, GroupLayout.PREFERRED_SIZE))
+								GroupLayout.PREFERRED_SIZE, 483, GroupLayout.PREFERRED_SIZE))
 						.addComponent(button))
-				.addContainerGap(21, Short.MAX_VALUE)));
+				.addContainerGap(15, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(button)
-						.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE).addGap(180)));
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(180, Short.MAX_VALUE)));
 		frame.getContentPane().setLayout(groupLayout);
+
+		initDate();
+		addListener();
+	}
+
+	private void initDate() {
+		table.updateUI();
+	}
+
+	private void addListener() {
+		button.addActionListener(t -> {
+			boolean result = earningDao.calEarning();
+			JOptionPane.showMessageDialog(null, result ? "操作成功！" : "操作失败！");
+			refresh();
+		});
 	}
 
 	@SuppressWarnings("unchecked")
 	public AbstractTableModel getTableModel() {
 		return new AbstractTableModel() {
-			String[] names = { "结算日期", "总投入金额", "当期投入金额", "总市值", "增长率(去当期)" };
+			String[] names = { "结算日期", "总投入", "当期投入", "总市值", "增长率(去当期)" };
 
 			private static final long serialVersionUID = 4354562018087682852L;
 
@@ -134,7 +152,7 @@ public class EarningWindow extends BaseWindow {
 					return CommonUtil.formateNum(getData().get(row).getTotal_value());
 				}
 				case (4): {
-					return getData().get(row).getIncrease_rate() + "%";
+					return CommonUtil.formateNum(getData().get(row).getIncrease_rate() * 100) + "%";
 				}
 				default:
 					return "";
@@ -145,8 +163,7 @@ public class EarningWindow extends BaseWindow {
 
 	public List<EarningDto> getData() {
 		if (earningList == null) {
-			// TODO
-			earningList = new ArrayList<>();
+			earningList = earningDao.query();
 		}
 
 		return earningList;
