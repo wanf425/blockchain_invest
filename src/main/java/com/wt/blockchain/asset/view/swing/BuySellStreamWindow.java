@@ -270,6 +270,8 @@ public class BuySellStreamWindow extends BaseWindow {
 	 * 添加监听
 	 */
 	private void addListener() {
+		BuySellStreamWindow window = this;
+		
 		// 查询按钮
 		queryBtn.addActionListener(new ActionListener() {
 			@Override
@@ -287,7 +289,7 @@ public class BuySellStreamWindow extends BaseWindow {
 					public void run() {
 						try {
 							if (buySellRecordsWindow == null) {
-								buySellRecordsWindow = new BuySellRecordsWindow();
+								buySellRecordsWindow = new BuySellRecordsWindow(window);
 							} else {
 								buySellRecordsWindow.show();
 							}
@@ -306,7 +308,7 @@ public class BuySellStreamWindow extends BaseWindow {
 					public void run() {
 						try {
 							if (putMoneyWindow == null) {
-								putMoneyWindow = new PutMoneyWindow();
+								putMoneyWindow = new PutMoneyWindow(window);
 							} else {
 								putMoneyWindow.show();
 							}
@@ -319,7 +321,6 @@ public class BuySellStreamWindow extends BaseWindow {
 		});
 
 		// 信息录入
-		BuySellStreamWindow window = this;
 		infoBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				EventQueue.invokeLater(new Runnable() {

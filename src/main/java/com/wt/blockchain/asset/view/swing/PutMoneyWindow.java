@@ -21,6 +21,7 @@ public class PutMoneyWindow extends BaseWindow {
 	private JTextField putMoneyTF;
 	private JLabel putMoneyLA = new JLabel("投入金额（RMB）：");
 	private CoinDetailDao coinDetailDao = new CoinDetailDao();
+	private BuySellStreamWindow buySellStreamWindow;
 
 	/**
 	 * Launch the application.
@@ -29,7 +30,7 @@ public class PutMoneyWindow extends BaseWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new PutMoneyWindow();
+					new PutMoneyWindow(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -40,7 +41,8 @@ public class PutMoneyWindow extends BaseWindow {
 	/**
 	 * Create the application.
 	 */
-	public PutMoneyWindow() {
+	public PutMoneyWindow(BuySellStreamWindow buySellStreamWindow) {
+		this.buySellStreamWindow = buySellStreamWindow;
 		initialize();
 		refresh();
 	}
@@ -48,7 +50,7 @@ public class PutMoneyWindow extends BaseWindow {
 	public void show() {
 		refresh();
 	}
-	
+
 	public void refresh() {
 		this.frame.setVisible(true);
 	}
@@ -94,6 +96,9 @@ public class PutMoneyWindow extends BaseWindow {
 				try {
 					coinDetailDao.putMonet(putMoney);
 					JOptionPane.showMessageDialog(null, "保存成功！");
+					if (buySellStreamWindow != null) {
+						buySellStreamWindow.doQuery();
+					}
 				} catch (Exception exc) {
 					JOptionPane.showMessageDialog(null, exc.getMessage());
 				}

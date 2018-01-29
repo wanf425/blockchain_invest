@@ -75,7 +75,8 @@ public class BuySellRecordsWindow extends BaseWindow {
 	private JLabel accountNumLA;
 	private JLabel accountNum;
 	private JComboBox<Constants> serviceChargeCB; // 手续费单位
-
+    private BuySellStreamWindow buySellStreamWindow;
+    
 	/**
 	 * Launch the application.
 	 * 
@@ -85,7 +86,7 @@ public class BuySellRecordsWindow extends BaseWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new BuySellRecordsWindow();
+					new BuySellRecordsWindow(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -96,9 +97,11 @@ public class BuySellRecordsWindow extends BaseWindow {
 	/**
 	 * Create the application.
 	 */
-	public BuySellRecordsWindow() {
+	public BuySellRecordsWindow(BuySellStreamWindow buySellStreamWindow) {
+		this.buySellStreamWindow = buySellStreamWindow;
 		initialize();
 		refresh();
+		
 	}
 
 	public void show() {
@@ -409,6 +412,9 @@ public class BuySellRecordsWindow extends BaseWindow {
 			// 保存
 			coinDetailDao.doSave(cd);
 			JOptionPane.showMessageDialog(null, "保存成功！");
+			if(buySellStreamWindow != null) {
+				buySellStreamWindow.doQuery();
+			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
